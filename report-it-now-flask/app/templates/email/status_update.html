@@ -1,0 +1,19 @@
+<p>Dear {{ name or 'Citizen' }},</p>
+
+<p>We would like to inform you that there has been an update regarding your submitted report with Ticket ID <strong>{{ ticket_id }}</strong>.</p>
+
+<p>
+    <strong>Current Status:</strong> {{ new_status }}
+</p>
+
+{% if notes %}
+<p><strong>Remarks from the reviewing official:</strong></p>
+<p><em>{{ notes }}</em></p>
+{% endif %}
+
+<p>We appreciate your proactive involvement in helping us build a cleaner, safer, and more responsive community.</p>
+
+<p>If you have any further questions or concerns, feel free to reach out to us via our website’s support section.</p>
+
+<p>Sincerely,</p>
+<p><strong>The CityLinkConnect Team 🙏🏻</strong></p>

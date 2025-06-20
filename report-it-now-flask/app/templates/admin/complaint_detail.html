@@ -1,0 +1,81 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<h1 class="h2">Complaint Details</h1>
+<p class="text-muted">Ticket ID: {{ complaint.ticket_id }}</p>
+
+<div class="row">
+    <!-- Left Column: Complaint Information -->
+    <div class="col-md-7">
+        <div class="card">
+            <div class="card-header">
+                <h4>Information</h4>
+            </div>
+            <div class="card-body">
+                <p><strong>Issue Type:</strong> {{ complaint.issue_type.value }}</p>
+                <p><strong>Location:</strong> {{ complaint.address_text }}</p>
+                <p><strong>Reported On:</strong> {{ complaint.created_at.strftime('%Y-%m-%d at %I:%M %p') }}</p>
+                <p><strong>Reported By:</strong> {{ complaint.reported_by_name or 'Anonymous' }}</p>
+                <!-- Add this inside the 'Information' card -->
+                <p><strong>Assigned To:</strong> {{ complaint.assigned_to.name if complaint.assigned_to else 'Unassigned' }}</p>
+                <hr>
+                <h5>Description:</h5>
+                <p>{{ complaint.description }}</p>
+                
+                {% if complaint.image_url %}
+                    <hr>
+                    <h5>Submitted Photo:</h5>
+                    <img src="{{ url_for('static', filename=complaint.image_url) }}" class="img-fluid rounded border" alt="Complaint Image">
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Status Update -->
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-header">
+                <h4>Manage Status</h4>
+            </div>
+            <div class="card-body">
+                <p><strong>Current Status:</strong> 
+                    {% if complaint.status.name == 'PENDING' %}
+                        <span class="badge bg-warning text-dark fs-6">{{ complaint.status.value }}</span>
+                    {% elif complaint.status.name == 'IN_PROGRESS' %}
+                        <span class="badge bg-info text-dark fs-6">{{ complaint.status.value }}</span>
+                    {% elif complaint.status.name == 'RESOLVED' %}
+                        <span class="badge bg-success fs-6">{{ complaint.status.value }}</span>
+                    {% elif complaint.status.name == 'REJECTED' %}
+                        <span class="badge bg-danger fs-6">{{ complaint.status.value }}</span>
+                    {% else %}
+                        <span class="badge bg-secondary fs-6">{{ complaint.status.value }}</span>
+                    {% endif %}
+                </p>
+                <hr>
+                <form method="POST" action="" novalidate>
+                    {{ form.hidden_tag() }} <!-- CSRF Token -->
+                    <div class="mb-3">
+                        {{ form.status.label(class="form-label") }}
+                        {{ form.status(class="form-select") }}
+                    </div>
+                    <!-- Add this inside the <form>, after the status dropdown -->
+                    {% if current_user.role == 'Admin' and form.assigned_to %}
+                    <div class="mb-3">
+                    {{ form.assigned_to.label(class="form-label") }}
+                    {{ form.assigned_to(class="form-select") }}
+                    </div>
+                    {% endif %}
+                    <div class="d-grid">
+                        {{ form.submit(class="btn btn-success") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="mt-3">
+             <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">
+                « Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

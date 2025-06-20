@@ -1,0 +1,103 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-9 col-md-10">
+
+            <!-- Card Wrapper -->
+            <div class="card border-0 shadow rounded-4">
+                <div class="card-body p-4 p-md-5">
+
+                    <!-- Form Header -->
+                    <div class="text-center mb-5">
+                        <i class="fas fa-file-alt fa-3x text-primary mb-3"></i>
+                        <h2 class="card-title fw-semibold">Submit a Complaint</h2>
+                        <p class="text-muted mb-0">Provide accurate details to help us respond quickly.</p>
+                    </div>
+
+                    <form method="POST" action="" enctype="multipart/form-data" novalidate>
+                        {{ form.hidden_tag() }}
+                        {{ form.latitude(id="latitude") }}
+                        {{ form.longitude(id="longitude") }}
+
+                        <!-- Section 1: Issue Details -->
+                        <h5 class="mb-3 mt-4 text-primary fw-bold border-bottom pb-2">1. Issue Details</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.issue_type.label(class="form-label") }}
+                                {{ form.issue_type(class="form-select") }}
+                                {% for error in form.issue_type.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            {{ form.description.label(class="form-label") }}
+                            {{ form.description(class="form-control", rows=5, placeholder="Describe the issue in detail...") }}
+                            {% for error in form.description.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+                        </div>
+
+                        <!-- Section 2: Location & Evidence -->
+                        <h5 class="mb-3 mt-4 text-primary fw-bold border-bottom pb-2">2. Location & Evidence</h5>
+                        <div class="mb-3">
+                            {{ form.address_text.label(class="form-label") }}
+                            {{ form.address_text(class="form-control", id="autocomplete", placeholder="Start typing an address...") }}
+                            <div class="form-text">Select a valid address from the suggestions.</div>
+                            {% for error in form.address_text.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+                        </div>
+                        <div class="mb-4">
+                            {{ form.photo.label(class="form-label") }}
+                            {{ form.photo(class="form-control") }}
+                            {% for error in form.photo.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+                        </div>
+
+                        <!-- Section 3: Contact Info -->
+                        <h5 class="mb-3 mt-4 text-primary fw-bold border-bottom pb-2">3. Contact Information <small class="text-muted">(Optional)</small></h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.reported_by_name.label(class="form-label") }}
+                                {{ form.reported_by_name(class="form-control", placeholder="Your name") }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.reported_by_email.label(class="form-label") }}
+                                {{ form.reported_by_email(class="form-control", placeholder="Email for status updates") }}
+                            </div>
+                        </div>
+
+                        <!-- Submit -->
+                        <hr class="my-4">
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-paper-plane me-2"></i> Submit Complaint
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://maps.googleapis.com/maps/api/js?key={{ config.GOOGLE_MAPS_API_KEY }}&libraries=places&callback=initAutocomplete" async defer></script>
+<script>
+    let autocomplete;
+    function initAutocomplete() {
+        const addressField = document.getElementById("autocomplete");
+        autocomplete = new google.maps.places.Autocomplete(addressField, {
+            componentRestrictions: { country: "in" },
+            fields: ["geometry"],
+            types: ["address"],
+        });
+        autocomplete.addListener("place_changed", () => {
+            const place = autocomplete.getPlace();
+            if (place.geometry) {
+                document.getElementById("latitude").value = place.geometry.location.lat();
+                document.getElementById("longitude").value = place.geometry.location.lng();
+            }
+        });
+    }
+</script>
+{% endblock %}

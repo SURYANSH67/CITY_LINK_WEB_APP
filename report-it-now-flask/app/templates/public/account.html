@@ -1,0 +1,62 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="h2">My Account</h1>
+    <p class="text-muted">Welcome back, {{ current_user.name }}! Here is a list of all the reports you have submitted.</p>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-light">
+        <h5 class="mb-0">My Report History</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th scope="col">Ticket ID</th>
+                        <th scope="col">Issue Type</th>
+                        <th scope="col">Location</th>
+                        <th scope="col">Date Reported</th>
+                        <th scope="col">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if complaints %}
+                        {% for complaint in complaints %}
+                            <tr>
+                                <td>
+                                    <!-- Link to the public tracking page -->
+                                    <a href="{{ url_for('main.track_complaint', ticket_id=complaint.ticket_id) }}" class="fw-bold">{{ complaint.ticket_id }}</a>
+                                </td>
+                                <td>{{ complaint.issue_type.value }}</td>
+                                <!-- === THIS IS THE FIX === -->
+                <td>{{ complaint.address_text }}</td>
+                
+                <td>{{ complaint.created_at.strftime('%Y-%m-%d') }}</td>
+                <td>
+                    <!-- ... (status badge logic) ... -->
+                                    {% set status_class = 'secondary' %}
+                                    {% if complaint.status.name == 'PENDING' %}{% set status_class = 'warning text-dark' %}{% endif %}
+                                    {% if complaint.status.name == 'IN_PROGRESS' %}{% set status_class = 'info text-dark' %}{% endif %}
+                                    {% if complaint.status.name == 'RESOLVED' %}{% set status_class = 'success' %}{% endif %}
+                                    {% if complaint.status.name == 'REJECTED' %}{% set status_class = 'danger' %}{% endif %}
+                                    <span class="badge bg-{{ status_class }}">{{ complaint.status.value }}</span>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center py-5">
+                                <p class="text-muted mb-0">You have not submitted any reports yet.</p>
+                                <a href="{{ url_for('main.submit_complaint') }}" class="btn btn-primary btn-sm mt-3">Submit Your First Report</a>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

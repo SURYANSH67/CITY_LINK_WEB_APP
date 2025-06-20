@@ -1,0 +1,30 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<div class="px-4 py-5 my-5 text-center">
+    <div class="py-5">
+        <i class="fas fa-check-circle fa-4x text-success mb-4"></i>
+        <h1 class="display-5 fw-bold">Report Submitted!</h1>
+        <div class="col-lg-8 mx-auto">
+            <p class="lead mb-4">
+                Thank you for helping improve our community. Your report has been successfully received.
+            </p>
+            <hr>
+            <p class="mt-4 fs-5">Please save your unique Ticket ID to track the status of your report:</p>
+            
+            <div class="d-inline-block bg-light border rounded p-3 my-3">
+                <h2 class="fw-bold text-primary mb-0"><code>{{ ticket_id }}</code></h2>
+            </div>
+            
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mt-4">
+                <a href="{{ url_for('main.track_complaint', ticket_id=ticket_id) }}" type="button" class="btn btn-primary btn-lg px-4 gap-3">
+                    <i class="fas fa-search me-2"></i>Track This Report Now
+                </a>
+                <a href="{{ url_for('main.index') }}" type="button" class="btn btn-outline-secondary btn-lg px-4">
+                    Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
